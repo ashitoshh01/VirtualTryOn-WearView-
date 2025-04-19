@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import CustomCursor from "@/components/custom-cursor"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,8 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
           <div className="flex min-h-screen flex-col">
+            <CustomCursor />
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />

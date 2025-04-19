@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -113,6 +113,18 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
       setTryOnComplete(true)
     }, 2000)
   }
+
+  useEffect(() => {
+    // Find all video elements and handle them safely
+    const videos = document.querySelectorAll("video")
+    videos.forEach((video) => {
+      if (video.src) {
+        video.play().catch((error) => {
+          console.error("Video autoplay failed:", error)
+        })
+      }
+    })
+  }, [])
 
   return (
     <div className="container mx-auto px-4 py-24">

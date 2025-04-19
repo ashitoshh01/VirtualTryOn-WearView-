@@ -9,7 +9,7 @@ export default function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
-    if (videoRef.current) {
+    if (videoRef.current && videoRef.current.src) {
       videoRef.current.play().catch((error) => {
         console.error("Video autoplay failed:", error)
       })
@@ -30,7 +30,7 @@ export default function HeroSection() {
           playsInline
           poster="/placeholder.svg?height=1080&width=1920"
         >
-          <source src="#" type="video/mp4" />
+          {/* We'll use a proper fallback instead of an empty source */}
           Your browser does not support the video tag.
         </video>
       </div>
