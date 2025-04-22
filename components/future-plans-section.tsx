@@ -10,7 +10,7 @@ export default function FuturePlansSection() {
       quarter: "Q3",
       title: "AR Integration",
       description: "Enhanced augmented reality features for more immersive try-on experiences.",
-      icon: <Zap className="w-5 h-5" />,
+      icon: <Zap className="w-5 h-5 text-white" />,
       color: "from-purple-500 to-blue-500",
     },
     {
@@ -18,7 +18,7 @@ export default function FuturePlansSection() {
       quarter: "Q4",
       title: "Mobile App Launch",
       description: "Dedicated iOS and Android apps with offline capabilities.",
-      icon: <Smartphone className="w-5 h-5" />,
+      icon: <Smartphone className="w-5 h-5 text-white" />,
       color: "from-blue-500 to-cyan-500",
     },
     {
@@ -26,7 +26,7 @@ export default function FuturePlansSection() {
       quarter: "Q1",
       title: "Global Retailer Partnerships",
       description: "Expanding our network with major fashion retailers worldwide.",
-      icon: <Globe className="w-5 h-5" />,
+      icon: <Globe className="w-5 h-5 text-white" />,
       color: "from-cyan-500 to-green-500",
     },
     {
@@ -34,7 +34,7 @@ export default function FuturePlansSection() {
       quarter: "Q2",
       title: "VR Shopping Experience",
       description: "Virtual reality shopping environments for next-level immersion.",
-      icon: <Headset className="w-5 h-5" />,
+      icon: <Headset className="w-5 h-5 text-white" />,
       color: "from-green-500 to-yellow-500",
     },
     {
@@ -42,7 +42,7 @@ export default function FuturePlansSection() {
       quarter: "Q3",
       title: "AI Style Recommendations",
       description: "Personalized outfit suggestions based on your preferences and body type.",
-      icon: <ShoppingBag className="w-5 h-5" />,
+      icon: <ShoppingBag className="w-5 h-5 text-white" />,
       color: "from-yellow-500 to-orange-500",
     },
     {
@@ -50,7 +50,7 @@ export default function FuturePlansSection() {
       quarter: "Q4",
       title: "In-Store Integration",
       description: "Bringing virtual try-on technology to physical retail locations.",
-      icon: <Store className="w-5 h-5" />,
+      icon: <Store className="w-5 h-5 text-white" />,
       color: "from-orange-500 to-red-500",
     },
   ]
@@ -103,7 +103,7 @@ export default function FuturePlansSection() {
                       backgroundImage: `linear-gradient(to right, ${item.color.split(" ")[1]}, ${item.color.split(" ")[3]})`,
                     }}
                   >
-                    <div className="text-white">{item.icon}</div>
+                    <div>{item.icon}</div>
                   </div>
 
                   {/* Empty space for the other side */}
