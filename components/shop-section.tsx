@@ -26,7 +26,7 @@ export default function ShopSection() {
       name: "Classic White T-Shirt",
       category: "Shirts",
       price: 29.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "https://images.unsplash.com/photo-1527719327859-c6ce80353573?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
       tags: ["New", "Popular"],
     },
     {
@@ -34,7 +34,7 @@ export default function ShopSection() {
       name: "Slim Fit Jeans",
       category: "Pants",
       price: 59.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTR8DgjrC9YbRj4F8wzlt41Uqk42BFrPl9rcXf5dvo-KaGQGE7-wHSRgKo6F8B9IECRARK0a8ZrwgB0kr6H8ZJz7j-VDJ7Bh6TstwbqXzCadBfpd7Rr97W4bw",
       tags: ["Bestseller"],
     },
     {
@@ -42,14 +42,14 @@ export default function ShopSection() {
       name: "Casual Hoodie",
       category: "Hoodies",
       price: 49.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRx8rhEZoHP1ELcw2QJ0GRQKXCoaIU_du9Xs5j1ZBMea0vkC4_byddBRoarHbEhVS2x_PD_Oqjr5BzeWmojb8nCm_4i3AqHTE1p4LSGxdxx9KU-D7Ma78ByaA",
     },
     {
       id: "4",
       name: "Running Shoes",
       category: "Shoes",
       price: 89.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRtxE6KlYvEiPDqQ2YZ1-mbkQdwxKnfuQD5rjUdwGQgYil94IjrXX4GvdZmi5ObY-t9RPQIiB7dvB3gkQS9Z4vDEhX6S7PBgcjGVFsX1yc2CMuDBmb9S1KlCQ",
       tags: ["New"],
     },
     {
@@ -57,7 +57,7 @@ export default function ShopSection() {
       name: "Leather Jacket",
       category: "Jackets",
       price: 199.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQTmfM2jM6ScGDvb4_c2V_i_AjWdQr4thPMR8D4-l417X50kBBWlcxpXk2fgluQvJNLrbQy9CQ7DZ4pb5oYVOPngN0u2rC86yTA-E-inRVpc3gpc-Inbsmu-Q",
       tags: ["Premium"],
     },
     {
@@ -65,7 +65,7 @@ export default function ShopSection() {
       name: "Summer Dress",
       category: "Dresses",
       price: 79.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQ1XpaulJgK6pcadSaASLUfydhMxCOjOOoPLyqAbAJvI1Bl3KfcIf6FEcCiWhm6qu6ny41jfB9Qk-UCYw5W2pS23frQY_eckOtJN2Jg0lJNPdK-7c4pCXkh",
     },
   ]
 
