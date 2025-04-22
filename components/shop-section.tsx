@@ -26,7 +26,7 @@ export default function ShopSection() {
       name: "Classic White T-Shirt",
       category: "Shirts",
       price: 29.99,
-      image: "https://images.unsplash.com/photo-1527719327859-c6ce80353573?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60..public/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1527719327859-c6ce80353573?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
       tags: ["New", "Popular"],
     },
     {
