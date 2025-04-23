@@ -6,6 +6,7 @@ import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { Moon, Sun, Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import CartDropdown from "@/components/cart-dropdown"
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme()
@@ -29,7 +30,6 @@ export default function Navbar() {
     { name: "About", href: "/#about" },
     { name: "Features", href: "/#features" },
     { name: "Shop", href: "/#shop" },
-    { name: "Future Plans", href: "/#future-plans" },
     { name: "Contact", href: "/#contact" },
   ]
 
@@ -54,6 +54,7 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          <CartDropdown />
           <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5 text-foreground" />}
           </Button>
@@ -61,6 +62,7 @@ export default function Navbar() {
 
         {/* Mobile Menu Button */}
         <div className="flex items-center md:hidden space-x-2">
+          <CartDropdown />
           <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5 text-foreground" />}
           </Button>

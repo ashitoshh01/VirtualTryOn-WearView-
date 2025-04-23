@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { ArrowLeft, Upload, Ruler, Check } from "lucide-react"
+import { ArrowLeft, Ruler, Check, ShoppingCart, Camera } from "lucide-react"
+import { useCart } from "@/context/cart-context"
+import { toast } from "@/components/ui/use-toast"
 
 // Sample product data
 const products = [
@@ -78,12 +80,16 @@ const products = [
 export default function TryOnPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const product = products.find((p) => p.id === params.id) || products[0]
+  const { addToCart } = useCart()
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [photoUploaded, setPhotoUploaded] = useState(false)
   const [measurementsComplete, setMeasurementsComplete] = useState(false)
   const [tryOnComplete, setTryOnComplete] = useState(false)
+
+  const [cameraActive, setCameraActive] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   // Measurements state
   const [measurements, setMeasurements] = useState({
@@ -114,6 +120,21 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
     }, 2000)
   }
 
+  const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+    })
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart.`,
+      duration: 3000,
+    })
+  }
+
   useEffect(() => {
     // Find all video elements and handle them safely
     const videos = document.querySelectorAll("video")
@@ -125,6 +146,34 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
       }
     })
   }, [])
+
+  const activateCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        videoRef.current.play()
+        setCameraActive(true)
+        // Simulate processing after a few seconds
+        setTimeout(() => {
+          setPhotoUploaded(true)
+          setTimeout(() => {
+            setTryOnComplete(true)
+            // Stop the camera stream when done
+            const tracks = stream.getTracks()
+            tracks.forEach((track) => track.stop())
+          }, 2000)
+        }, 3000)
+      }
+    } catch (error) {
+      console.error("Error accessing camera:", error)
+      toast({
+        title: "Camera Error",
+        description: "Unable to access your camera. Please check permissions.",
+        variant: "destructive",
+      })
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-24">
@@ -178,6 +227,13 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
                     ))}
                   </div>
                 </div>
+
+                <Button
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
+                  onClick={handleAddToCart}
+                >
+                  <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
+                </Button>
               </div>
             </div>
           </motion.div>
@@ -229,14 +285,52 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
                         We're creating your virtual model. This will take just a moment...
                       </p>
                     </div>
+                  ) : cameraActive ? (
+                    <div className="text-center space-y-4">
+                      <div className="relative max-w-md mx-auto">
+                        <video
+                          ref={videoRef}
+                          className="w-full h-auto rounded-lg border-2 border-primary"
+                          autoPlay
+                          playsInline
+                        ></video>
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                          <div className="relative w-40 h-60">
+                            <Image
+                              src={product.image || "/placeholder.svg"}
+                              alt={product.name}
+                              fill
+                              className="object-contain opacity-70"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-muted-foreground">
+                        Position yourself in the frame to see how the {product.name.toLowerCase()} looks on you.
+                      </p>
+                      <div className="flex justify-center">
+                        <Button
+                          onClick={() => {
+                            if (videoRef.current && videoRef.current.srcObject) {
+                              const stream = videoRef.current.srcObject as MediaStream
+                              const tracks = stream.getTracks()
+                              tracks.forEach((track) => track.stop())
+                            }
+                            setCameraActive(false)
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
                   ) : (
                     <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                      <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-medium mb-2">Upload Your Photo</h3>
+                      <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-medium mb-2">Use Your Camera</h3>
                       <p className="text-muted-foreground mb-6">
-                        Upload a full-body photo of yourself to see how this item will look on you.
+                        Open your camera to see how this {product.name.toLowerCase()} will look on you in real-time.
                       </p>
-                      <Button onClick={handlePhotoUpload}>Select Photo</Button>
+                      <Button onClick={activateCamera}>Open Camera</Button>
                     </div>
                   )}
                 </TabsContent>
@@ -407,8 +501,11 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
                     </div>
                   </div>
 
-                  <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600">
-                    Add to Cart
+                  <Button
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
+                    onClick={handleAddToCart}
+                  >
+                    <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
                   </Button>
                 </div>
 

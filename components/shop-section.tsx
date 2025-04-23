@@ -7,6 +7,9 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { ShoppingCart, Eye } from "lucide-react"
+import { useCart } from "@/context/cart-context"
+import { toast } from "@/components/ui/use-toast"
 
 // Product type definition
 type Product = {
@@ -26,7 +29,7 @@ export default function ShopSection() {
       name: "Classic White T-Shirt",
       category: "Shirts",
       price: 29.99,
-      image: "https://images.unsplash.com/photo-1527719327859-c6ce80353573?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+      image: "/placeholder.svg?height=400&width=300",
       tags: ["New", "Popular"],
     },
     {
@@ -34,7 +37,7 @@ export default function ShopSection() {
       name: "Slim Fit Jeans",
       category: "Pants",
       price: 59.99,
-      image: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTR8DgjrC9YbRj4F8wzlt41Uqk42BFrPl9rcXf5dvo-KaGQGE7-wHSRgKo6F8B9IECRARK0a8ZrwgB0kr6H8ZJz7j-VDJ7Bh6TstwbqXzCadBfpd7Rr97W4bw",
+      image: "/placeholder.svg?height=400&width=300",
       tags: ["Bestseller"],
     },
     {
@@ -42,14 +45,14 @@ export default function ShopSection() {
       name: "Casual Hoodie",
       category: "Hoodies",
       price: 49.99,
-      image: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRx8rhEZoHP1ELcw2QJ0GRQKXCoaIU_du9Xs5j1ZBMea0vkC4_byddBRoarHbEhVS2x_PD_Oqjr5BzeWmojb8nCm_4i3AqHTE1p4LSGxdxx9KU-D7Ma78ByaA",
+      image: "/placeholder.svg?height=400&width=300",
     },
     {
       id: "4",
       name: "Running Shoes",
       category: "Shoes",
       price: 89.99,
-      image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRtxE6KlYvEiPDqQ2YZ1-mbkQdwxKnfuQD5rjUdwGQgYil94IjrXX4GvdZmi5ObY-t9RPQIiB7dvB3gkQS9Z4vDEhX6S7PBgcjGVFsX1yc2CMuDBmb9S1KlCQ",
+      image: "/placeholder.svg?height=400&width=300",
       tags: ["New"],
     },
     {
@@ -57,7 +60,7 @@ export default function ShopSection() {
       name: "Leather Jacket",
       category: "Jackets",
       price: 199.99,
-      image: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQTmfM2jM6ScGDvb4_c2V_i_AjWdQr4thPMR8D4-l417X50kBBWlcxpXk2fgluQvJNLrbQy9CQ7DZ4pb5oYVOPngN0u2rC86yTA-E-inRVpc3gpc-Inbsmu-Q",
+      image: "/placeholder.svg?height=400&width=300",
       tags: ["Premium"],
     },
     {
@@ -65,14 +68,24 @@ export default function ShopSection() {
       name: "Summer Dress",
       category: "Dresses",
       price: 79.99,
-      image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQ1XpaulJgK6pcadSaASLUfydhMxCOjOOoPLyqAbAJvI1Bl3KfcIf6FEcCiWhm6qu6ny41jfB9Qk-UCYw5W2pS23frQY_eckOtJN2Jg0lJNPdK-7c4pCXkh",
+      image: "/placeholder.svg?height=400&width=300",
     },
   ]
 
   const [filter, setFilter] = useState<string>("All")
   const categories = ["All", "Shirts", "Pants", "Hoodies", "Shoes", "Jackets", "Dresses"]
+  const { addToCart } = useCart()
 
   const filteredProducts = filter === "All" ? products : products.filter((product) => product.category === filter)
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product)
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart.`,
+      duration: 3000,
+    })
+  }
 
   return (
     <section id="shop" className="py-20 bg-muted">
@@ -141,9 +154,14 @@ export default function ShopSection() {
                   <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
                   <div className="font-medium">${product.price.toFixed(2)}</div>
                 </CardContent>
-                <CardFooter className="p-4 pt-0">
-                  <Button asChild className="w-full">
-                    <Link href={`/try-on/${product.id}`}>Virtual Try-On</Link>
+                <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-2">
+                  <Button asChild variant="outline" className="w-full">
+                    <Link href={`/try-on/${product.id}`}>
+                      <Eye className="mr-2 h-4 w-4" /> Try-On
+                    </Link>
+                  </Button>
+                  <Button className="w-full" onClick={() => handleAddToCart(product)}>
+                    <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
                   </Button>
                 </CardFooter>
               </Card>

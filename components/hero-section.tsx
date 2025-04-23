@@ -4,9 +4,12 @@ import { useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useTheme } from "next-themes"
 
 export default function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const { theme } = useTheme()
+  const isDarkMode = theme === "dark"
 
   useEffect(() => {
     if (videoRef.current && videoRef.current.src) {
@@ -55,7 +58,16 @@ export default function HeroSection() {
             >
               <Link href="/#shop">Try It Now</Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className={
+                isDarkMode
+                  ? "bg-black text-white border-white hover:bg-black/90 hover:text-white"
+                  : "bg-white text-black border-white hover:bg-white/90 hover:text-black"
+              }
+            >
               <Link href="/#about">Learn More</Link>
             </Button>
           </div>
