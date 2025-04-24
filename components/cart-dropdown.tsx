@@ -8,9 +8,18 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useCart } from "@/context/cart-context"
 
+// Convert USD to INR (approximate conversion rate)
+const convertToINR = (usdPrice: number) => {
+  const conversionRate = 75
+  return Math.round(usdPrice * conversionRate)
+}
+
 export default function CartDropdown() {
   const { cart, totalItems, totalPrice, updateQuantity, removeFromCart } = useCart()
   const [open, setOpen] = useState(false)
+
+  // Convert total price to INR
+  const totalPriceINR = convertToINR(totalPrice)
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -56,7 +65,7 @@ export default function CartDropdown() {
                           <span className="sr-only">Remove</span>
                         </Button>
                       </div>
-                      <div className="text-sm text-muted-foreground mb-2">${item.price.toFixed(2)}</div>
+                      <div className="text-sm text-muted-foreground mb-2">₹{convertToINR(item.price)}</div>
                       <div className="flex items-center">
                         <Button
                           variant="outline"
@@ -86,7 +95,7 @@ export default function CartDropdown() {
               <div className="mt-4 pt-4 border-t border-border">
                 <div className="flex justify-between mb-4">
                   <span className="font-medium">Total:</span>
-                  <span className="font-medium">${totalPrice.toFixed(2)}</span>
+                  <span className="font-medium">₹{totalPriceINR}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <Button variant="outline" onClick={() => setOpen(false)} asChild>

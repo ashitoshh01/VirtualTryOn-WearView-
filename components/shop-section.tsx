@@ -11,6 +11,12 @@ import { ShoppingCart, Eye } from "lucide-react"
 import { useCart } from "@/context/cart-context"
 import { toast } from "@/components/ui/use-toast"
 
+// Convert USD to INR (approximate conversion rate)
+const convertToINR = (usdPrice: number) => {
+  const conversionRate = 75
+  return Math.round(usdPrice * conversionRate)
+}
+
 // Product type definition
 type Product = {
   id: string
@@ -152,7 +158,7 @@ export default function ShopSection() {
                 <CardContent className="p-4">
                   <div className="text-sm text-muted-foreground mb-1">{product.category}</div>
                   <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
-                  <div className="font-medium">${product.price.toFixed(2)}</div>
+                  <div className="font-medium">₹{convertToINR(product.price)}</div>
                 </CardContent>
                 <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-2">
                   <Button asChild variant="outline" className="w-full">

@@ -101,26 +101,7 @@ export default function FeaturesSection() {
           viewport={{ once: true }}
           className="mt-16 text-center"
         >
-          <div className="inline-block bg-primary/10 text-primary text-sm font-medium px-4 py-2 rounded-full mb-6">
-            Powered by AI & AR Technology
-          </div>
-          <h3 className="text-2xl md:text-3xl font-bold mb-6 max-w-2xl mx-auto">
-            Our technology adapts to your unique body shape for the most accurate virtual try-on experience
-          </h3>
-          <div className="max-w-4xl mx-auto bg-muted rounded-lg p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">99%</div>
-              <p className="text-sm text-muted-foreground">Accuracy in body measurements</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">1000+</div>
-              <p className="text-sm text-muted-foreground">Supported clothing brands</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">5M+</div>
-              <p className="text-sm text-muted-foreground">Virtual try-ons per month</p>
-            </div>
-          </div>
+          
         </motion.div>
       </div>
     </section>

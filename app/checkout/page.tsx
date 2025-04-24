@@ -12,10 +12,21 @@ import { useCart } from "@/context/cart-context"
 import { ArrowLeft, CreditCard, Truck, Check } from "lucide-react"
 import { useState } from "react"
 
+// Convert USD to INR (approximate conversion rate)
+const convertToINR = (usdPrice: number) => {
+  const conversionRate = 75
+  return Math.round(usdPrice * conversionRate)
+}
+
 export default function CheckoutPage() {
   const { cart, totalPrice, clearCart } = useCart()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
+
+  // Convert prices to INR
+  const totalPriceINR = convertToINR(totalPrice)
+  const taxINR = convertToINR(totalPrice * 0.1)
+  const totalWithTaxINR = totalPriceINR + taxINR
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -120,7 +131,7 @@ export default function CheckoutPage() {
                   <Input id="state" required />
                 </div>
                 <div>
-                  <Label htmlFor="zip">ZIP Code</Label>
+                  <Label htmlFor="zip">PIN Code</Label>
                   <Input id="zip" required />
                 </div>
               </div>
@@ -134,27 +145,31 @@ export default function CheckoutPage() {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="card" id="card" />
                   <Label htmlFor="card" className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4" /> Credit Card
+                    <CreditCard className="h-4 w-4" /> Credit/Debit Card
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="paypal" id="paypal" />
-                  <Label htmlFor="paypal">PayPal</Label>
+                  <RadioGroupItem value="upi" id="upi" />
+                  <Label htmlFor="upi">UPI</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="cod" id="cod" />
+                  <Label htmlFor="cod">Cash on Delivery</Label>
                 </div>
               </RadioGroup>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <Label htmlFor="cardNumber">Card Number</Label>
-                  <Input id="cardNumber" placeholder="1234 5678 9012 3456" required />
+                  <Input id="cardNumber" placeholder="1234 5678 9012 3456" />
                 </div>
                 <div>
                   <Label htmlFor="expiry">Expiry Date</Label>
-                  <Input id="expiry" placeholder="MM/YY" required />
+                  <Input id="expiry" placeholder="MM/YY" />
                 </div>
                 <div>
-                  <Label htmlFor="cvc">CVC</Label>
-                  <Input id="cvc" placeholder="123" required />
+                  <Label htmlFor="cvc">CVV</Label>
+                  <Input id="cvc" placeholder="123" />
                 </div>
               </div>
             </div>
@@ -173,7 +188,7 @@ export default function CheckoutPage() {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="express" id="express" />
                   <Label htmlFor="express" className="flex items-center gap-2">
-                    <Truck className="h-4 w-4" /> Express Shipping (1-2 business days) - $9.99
+                    <Truck className="h-4 w-4" /> Express Shipping (1-2 business days) - ₹749
                   </Label>
                 </div>
               </RadioGroup>
@@ -202,10 +217,10 @@ export default function CheckoutPage() {
                   <div className="flex-1">
                     <div className="flex justify-between">
                       <h4 className="font-medium">{item.name}</h4>
-                      <span>${(item.price * item.quantity).toFixed(2)}</span>
+                      <span>₹{convertToINR(item.price * item.quantity)}</span>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Qty: {item.quantity} × ${item.price.toFixed(2)}
+                      Qty: {item.quantity} × ₹{convertToINR(item.price)}
                     </div>
                   </div>
                 </div>
@@ -215,7 +230,7 @@ export default function CheckoutPage() {
             <div className="space-y-3 pt-6 border-t border-border">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${totalPrice.toFixed(2)}</span>
+                <span>₹{totalPriceINR}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
@@ -223,11 +238,11 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tax</span>
-                <span>${(totalPrice * 0.1).toFixed(2)}</span>
+                <span>₹{taxINR}</span>
               </div>
               <div className="pt-3 border-t border-border flex justify-between font-medium">
                 <span>Total</span>
-                <span>${(totalPrice + totalPrice * 0.1).toFixed(2)}</span>
+                <span>₹{totalWithTaxINR}</span>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -12,8 +12,15 @@ import { Slider } from "@/components/ui/slider"
 import { ArrowLeft, Ruler, Check, ShoppingCart, Camera } from "lucide-react"
 import { useCart } from "@/context/cart-context"
 import { toast } from "@/components/ui/use-toast"
+import CameraModal from "@/components/camera-modal"
 
-// Sample product data
+// Convert USD to INR (approximate conversion rate)
+const convertToINR = (usdPrice: number) => {
+  const conversionRate = 75
+  return Math.round(usdPrice * conversionRate)
+}
+
+// Sample product data with prices in USD (will be converted to INR)
 const products = [
   {
     id: "1",
@@ -87,9 +94,7 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
   const [photoUploaded, setPhotoUploaded] = useState(false)
   const [measurementsComplete, setMeasurementsComplete] = useState(false)
   const [tryOnComplete, setTryOnComplete] = useState(false)
-
-  const [cameraActive, setCameraActive] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false)
 
   // Measurements state
   const [measurements, setMeasurements] = useState({
@@ -105,9 +110,11 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
     setMeasurements((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handlePhotoUpload = () => {
-    // Simulate photo upload
+  const handleCameraCapture = () => {
     setPhotoUploaded(true)
+    setIsCameraModalOpen(false)
+
+    // Simulate processing after capture
     setTimeout(() => {
       setTryOnComplete(true)
     }, 2000)
@@ -135,45 +142,8 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
     })
   }
 
-  useEffect(() => {
-    // Find all video elements and handle them safely
-    const videos = document.querySelectorAll("video")
-    videos.forEach((video) => {
-      if (video.src) {
-        video.play().catch((error) => {
-          console.error("Video autoplay failed:", error)
-        })
-      }
-    })
-  }, [])
-
-  const activateCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        videoRef.current.play()
-        setCameraActive(true)
-        // Simulate processing after a few seconds
-        setTimeout(() => {
-          setPhotoUploaded(true)
-          setTimeout(() => {
-            setTryOnComplete(true)
-            // Stop the camera stream when done
-            const tracks = stream.getTracks()
-            tracks.forEach((track) => track.stop())
-          }, 2000)
-        }, 3000)
-      }
-    } catch (error) {
-      console.error("Error accessing camera:", error)
-      toast({
-        title: "Camera Error",
-        description: "Unable to access your camera. Please check permissions.",
-        variant: "destructive",
-      })
-    }
-  }
+  // Convert product price to INR
+  const priceInINR = convertToINR(product.price)
 
   return (
     <div className="container mx-auto px-4 py-24">
@@ -193,7 +163,7 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
               </div>
 
               <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
-              <div className="text-xl font-medium mb-4">${product.price.toFixed(2)}</div>
+              <div className="text-xl font-medium mb-4">₹{priceInINR}</div>
               <p className="text-muted-foreground mb-6">{product.description}</p>
 
               <div className="space-y-6">
@@ -285,52 +255,14 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
                         We're creating your virtual model. This will take just a moment...
                       </p>
                     </div>
-                  ) : cameraActive ? (
-                    <div className="text-center space-y-4">
-                      <div className="relative max-w-md mx-auto">
-                        <video
-                          ref={videoRef}
-                          className="w-full h-auto rounded-lg border-2 border-primary"
-                          autoPlay
-                          playsInline
-                        ></video>
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                          <div className="relative w-40 h-60">
-                            <Image
-                              src={product.image || "/placeholder.svg"}
-                              alt={product.name}
-                              fill
-                              className="object-contain opacity-70"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-muted-foreground">
-                        Position yourself in the frame to see how the {product.name.toLowerCase()} looks on you.
-                      </p>
-                      <div className="flex justify-center">
-                        <Button
-                          onClick={() => {
-                            if (videoRef.current && videoRef.current.srcObject) {
-                              const stream = videoRef.current.srcObject as MediaStream
-                              const tracks = stream.getTracks()
-                              tracks.forEach((track) => track.stop())
-                            }
-                            setCameraActive(false)
-                          }}
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
                   ) : (
                     <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                       <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                       <h3 className="text-lg font-medium mb-2">Use Your Camera</h3>
                       <p className="text-muted-foreground mb-6">
-                        Open your camera to see how this {product.name.toLowerCase()} will look on you in real-time.
+                        See how this {product.name.toLowerCase()} will look on you in real-time.
                       </p>
-                      <Button onClick={activateCamera}>Open Camera</Button>
+                      <Button onClick={() => setIsCameraModalOpen(true)}>Open Camera</Button>
                     </div>
                   )}
                 </TabsContent>
@@ -526,6 +458,7 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
                             />
                           </div>
                           <div className="text-sm font-medium truncate">{p.name}</div>
+                          <div className="text-sm text-muted-foreground">₹{convertToINR(p.price)}</div>
                         </Link>
                       ))}
                   </div>
@@ -535,6 +468,15 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
           </motion.div>
         </div>
       </div>
+
+      {/* Camera Modal */}
+      <CameraModal
+        isOpen={isCameraModalOpen}
+        onClose={() => setIsCameraModalOpen(false)}
+        onCapture={handleCameraCapture}
+        productImage={product.image}
+        productName={product.name}
+      />
     </div>
   )
 }
