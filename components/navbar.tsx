@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { Moon, Sun, Menu, X } from "lucide-react"
@@ -42,15 +43,19 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="font-bold text-xl bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text">
-            WearView
-          </span>
+          <div className="relative h-12 w-44">
+            <Image src="/images/wearview-logo.png" alt="WearView Logo" fill className="object-contain" priority />
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           {navLinks.map((link) => (
-            <Link key={link.name} href={link.href} className="text-sm font-medium transition-colors hover:text-primary">
+            <Link
+              key={link.name}
+              href={link.href}
+              className="text-base font-medium transition-colors hover:text-primary"
+            >
               {link.name}
             </Link>
           ))}
@@ -86,7 +91,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-sm font-medium py-2 transition-colors hover:text-primary"
+                  className="text-base font-medium py-2 transition-colors hover:text-primary"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.name}

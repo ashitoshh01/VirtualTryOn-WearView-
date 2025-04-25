@@ -100,9 +100,7 @@ export default function FeaturesSection() {
           transition={{ duration: 0.8, delay: 0.3 }}
           viewport={{ once: true }}
           className="mt-16 text-center"
-        >
-          
-        </motion.div>
+        ></motion.div>
       </div>
     </section>
   )

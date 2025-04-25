@@ -29,8 +29,6 @@ const products = [
     price: 29.99,
     image: "/placeholder.svg?height=400&width=300",
     description: "A comfortable, classic fit t-shirt made from 100% cotton.",
-    sizes: ["XS", "S", "M", "L", "XL"],
-    colors: ["White", "Black", "Gray"],
   },
   {
     id: "2",
@@ -39,8 +37,6 @@ const products = [
     price: 59.99,
     image: "/placeholder.svg?height=400&width=300",
     description: "Modern slim fit jeans with a comfortable stretch fabric.",
-    sizes: ["28", "30", "32", "34", "36"],
-    colors: ["Blue", "Black", "Gray"],
   },
   {
     id: "3",
@@ -49,8 +45,6 @@ const products = [
     price: 49.99,
     image: "/placeholder.svg?height=400&width=300",
     description: "A warm and comfortable hoodie perfect for casual wear.",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    colors: ["Gray", "Black", "Navy"],
   },
   {
     id: "4",
@@ -59,8 +53,6 @@ const products = [
     price: 89.99,
     image: "/placeholder.svg?height=400&width=300",
     description: "Lightweight running shoes with responsive cushioning.",
-    sizes: ["7", "8", "9", "10", "11", "12"],
-    colors: ["Black/White", "Blue/Gray", "Red/Black"],
   },
   {
     id: "5",
@@ -69,8 +61,6 @@ const products = [
     price: 199.99,
     image: "/placeholder.svg?height=400&width=300",
     description: "Premium leather jacket with a classic design.",
-    sizes: ["S", "M", "L", "XL"],
-    colors: ["Black", "Brown", "Tan"],
   },
   {
     id: "6",
@@ -79,8 +69,6 @@ const products = [
     price: 79.99,
     image: "/placeholder.svg?height=400&width=300",
     description: "Light and flowy summer dress with a floral pattern.",
-    sizes: ["XS", "S", "M", "L"],
-    colors: ["Floral", "Blue", "White"],
   },
 ]
 
@@ -89,8 +77,6 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
   const product = products.find((p) => p.id === params.id) || products[0]
   const { addToCart } = useCart()
 
-  const [selectedSize, setSelectedSize] = useState<string | null>(null)
-  const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [photoUploaded, setPhotoUploaded] = useState(false)
   const [measurementsComplete, setMeasurementsComplete] = useState(false)
   const [tryOnComplete, setTryOnComplete] = useState(false)
@@ -166,45 +152,12 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
               <div className="text-xl font-medium mb-4">₹{priceInINR}</div>
               <p className="text-muted-foreground mb-6">{product.description}</p>
 
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-medium mb-3">Size</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {product.sizes.map((size) => (
-                      <Button
-                        key={size}
-                        variant={selectedSize === size ? "default" : "outline"}
-                        onClick={() => setSelectedSize(size)}
-                        className="min-w-[3rem]"
-                      >
-                        {size}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-medium mb-3">Color</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {product.colors.map((color) => (
-                      <Button
-                        key={color}
-                        variant={selectedColor === color ? "default" : "outline"}
-                        onClick={() => setSelectedColor(color)}
-                      >
-                        {color}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                <Button
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
-                  onClick={handleAddToCart}
-                >
-                  <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
-                </Button>
-              </div>
+              <Button
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
+                onClick={handleAddToCart}
+              >
+                <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
+              </Button>
             </div>
           </motion.div>
         </div>
@@ -216,15 +169,20 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <div className="bg-muted rounded-lg p-6 mb-8">
-              <h2 className="text-xl font-bold mb-4">Virtual Try-On</h2>
-              <p className="text-muted-foreground mb-6">
-                See how this {product.name.toLowerCase()} will look on you using our virtual try-on technology. Choose
-                one of the methods below to get started.
+              <div className="flex justify-center mb-6">
+                <div className="relative h-12 w-48">
+                  <Image src="/images/wearview-logo.png" alt="WearView Logo" fill className="object-contain" />
+                </div>
+              </div>
+
+              <h2 className="text-xl font-bold mb-4 text-center">Virtual Try-On</h2>
+              <p className="text-muted-foreground mb-6 text-center">
+                See how this {product.name.toLowerCase()} will look on you using our virtual try-on technology.
               </p>
 
               <Tabs defaultValue="photo" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="photo">Upload Photo</TabsTrigger>
+                  <TabsTrigger value="photo">Use Camera</TabsTrigger>
                   <TabsTrigger value="measurements">Body Measurements</TabsTrigger>
                 </TabsList>
 
@@ -418,8 +376,7 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
                 <div className="bg-background rounded-lg p-6 border border-border">
                   <h3 className="text-lg font-bold mb-4">Perfect Fit!</h3>
                   <p className="text-muted-foreground mb-4">
-                    Based on your {selectedSize ? `selected size (${selectedSize})` : "measurements"}, this{" "}
-                    {product.name.toLowerCase()} is a great fit for you.
+                    Based on your measurements, this {product.name.toLowerCase()} is a great fit for you.
                   </p>
 
                   <div className="grid grid-cols-2 gap-4 mb-6">
@@ -429,7 +386,7 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
                     </div>
                     <div className="bg-muted p-4 rounded-lg">
                       <div className="text-sm text-muted-foreground">Recommended Size</div>
-                      <div className="text-lg font-medium">{selectedSize || product.sizes[2]}</div>
+                      <div className="text-lg font-medium">M</div>
                     </div>
                   </div>
 

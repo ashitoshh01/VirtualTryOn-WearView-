@@ -20,14 +20,11 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
   const [permissionError, setPermissionError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  // Only set up camera when modal is opened, not on component mount
+  // Start camera immediately when modal opens
   useEffect(() => {
     if (isOpen) {
-      // Don't auto-start camera, wait for user to click button
-      setIsLoading(true)
-      setPermissionError(false)
+      startCamera()
     } else {
-      // Clean up when modal closes
       stopCamera()
     }
 
@@ -41,45 +38,28 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
     setPermissionError(false)
 
     try {
-      // Explicitly request camera with user gesture context
+      // Request camera access
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: "user", // Use front camera on mobile devices
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
+        video: true,
         audio: false,
       })
 
+      // Set the stream to the video element
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play().catch((error) => {
-            console.error("Error playing video:", error)
-            setPermissionError(true)
-          })
-        }
+        videoRef.current.play().catch((error) => {
+          console.error("Error playing video:", error)
+        })
         setStream(mediaStream)
-        setIsLoading(false)
       }
-    } catch (error: any) {
+      setIsLoading(false)
+    } catch (error) {
       console.error("Error accessing camera:", error)
       setPermissionError(true)
       setIsLoading(false)
-
-      // Show more specific error message based on the error
-      let errorMessage = "Unable to access your camera. Please check your browser permissions."
-      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
-        errorMessage = "Camera access was denied. Please allow camera access in your browser settings."
-      } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
-        errorMessage = "No camera found on your device."
-      } else if (error.name === "NotReadableError" || error.name === "TrackStartError") {
-        errorMessage = "Your camera is already in use by another application."
-      }
-
       toast({
         title: "Camera Access Error",
-        description: errorMessage,
+        description: "Unable to access your camera. Please check your browser permissions.",
         variant: "destructive",
       })
     }
@@ -89,11 +69,6 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
     if (stream) {
       stream.getTracks().forEach((track) => track.stop())
       setStream(null)
-    }
-
-    // Also clear the video element source
-    if (videoRef.current) {
-      videoRef.current.srcObject = null
     }
   }
 
@@ -130,77 +105,48 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
               <p className="text-muted-foreground max-w-md mx-auto mb-4">
                 We couldn't access your camera. This could be due to browser permissions or your device settings.
               </p>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Try these options:</p>
-                  <ul className="text-sm text-left list-disc pl-6 mb-4 space-y-1">
-                    <li>Check your browser's camera permissions in settings</li>
-                    <li>Make sure no other application is using your camera</li>
-                    <li>Try using a different browser</li>
-                    <li>Restart your browser and try again</li>
-                  </ul>
-                </div>
-                <Button variant="default" onClick={startCamera}>
-                  Try Again
-                </Button>
-              </div>
+              <Button variant="default" onClick={startCamera}>
+                Try Again
+              </Button>
             </div>
-          ) : isLoading && !stream ? (
+          ) : isLoading ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 rounded-full border-4 border-t-primary border-r-primary border-b-primary/30 border-l-primary/30 animate-spin mx-auto mb-4"></div>
-              <p className="text-muted-foreground mb-6">Preparing camera...</p>
-              <Button onClick={startCamera} disabled={stream !== null}>
-                Start Camera
-              </Button>
+              <p className="text-muted-foreground">Accessing camera...</p>
             </div>
           ) : (
             <>
               <div className="relative max-w-md mx-auto">
-                {!stream && (
-                  <div className="aspect-video bg-muted rounded-lg flex items-center justify-center mb-4">
-                    <Button size="lg" onClick={startCamera} className="flex items-center gap-2">
-                      <Camera className="h-5 w-5" /> Start Camera
-                    </Button>
+                <video
+                  ref={videoRef}
+                  className="w-full h-auto rounded-lg border-2 border-primary"
+                  autoPlay
+                  playsInline
+                  muted
+                  style={{ display: "block", minHeight: "300px", background: "#000" }}
+                ></video>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                  <div className="relative w-40 h-60">
+                    <Image
+                      src={productImage || "/placeholder.svg"}
+                      alt={productName}
+                      fill
+                      className="object-contain opacity-70"
+                    />
                   </div>
-                )}
-
-                {stream && (
-                  <>
-                    <video
-                      ref={videoRef}
-                      className="w-full h-auto rounded-lg border-2 border-primary"
-                      autoPlay
-                      playsInline
-                      muted
-                    ></video>
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                      <div className="relative w-40 h-60">
-                        <Image
-                          src={productImage || "/placeholder.svg"}
-                          alt={productName}
-                          fill
-                          className="object-contain opacity-70"
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
+                </div>
               </div>
 
-              {stream && (
-                <>
-                  <p className="text-muted-foreground text-center mt-4 mb-6">
-                    Position yourself in the frame to see how the item looks on you.
-                  </p>
+              <p className="text-muted-foreground text-center mt-4 mb-6">
+                Position yourself in the frame to see how the item looks on you.
+              </p>
 
-                  <div className="flex justify-center gap-4">
-                    <Button variant="outline" onClick={handleClose}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleCapture}>Capture</Button>
-                  </div>
-                </>
-              )}
+              <div className="flex justify-center gap-4">
+                <Button variant="outline" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button onClick={handleCapture}>Capture</Button>
+              </div>
             </>
           )}
         </div>
