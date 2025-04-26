@@ -56,7 +56,7 @@ export default function ContactSection() {
           </p>
         </motion.div>
 
-        <div className="max-w-md mx-auto">
+        <div className="w-[90vw] max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}

@@ -35,7 +35,7 @@ export default function ShopSection() {
       name: "Classic White T-Shirt",
       category: "Shirts",
       price: 29.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "/images/tshirt.jpeg",
       tags: ["New", "Popular"],
     },
     {
@@ -43,15 +43,15 @@ export default function ShopSection() {
       name: "Slim Fit Jeans",
       category: "Pants",
       price: 59.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "/images/jeans.jpeg",
       tags: ["Bestseller"],
     },
     {
       id: "3",
-      name: "Casual Hoodie",
+      name: "Blessed Hoodie",
       category: "Hoodies",
       price: 49.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "/images/hoodie.webp",
     },
     {
       id: "4",
@@ -66,20 +66,20 @@ export default function ShopSection() {
       name: "Leather Jacket",
       category: "Jackets",
       price: 199.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "/images/leather-jacket.webp",
       tags: ["Premium"],
     },
     {
       id: "6",
-      name: "Summer Dress",
-      category: "Dresses",
+      name: "Summer Beach Set",
+      category: "Sets",
       price: 79.99,
-      image: "/placeholder.svg?height=400&width=300",
+      image: "/images/summer-set.webp",
     },
   ]
 
   const [filter, setFilter] = useState<string>("All")
-  const categories = ["All", "Shirts", "Pants", "Hoodies", "Shoes", "Jackets", "Dresses"]
+  const categories = ["All", "Shirts", "Pants", "Hoodies", "Shoes", "Jackets", "Sets"]
   const { addToCart } = useCart()
 
   const filteredProducts = filter === "All" ? products : products.filter((product) => product.category === filter)

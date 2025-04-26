@@ -24,7 +24,7 @@ export default function Footer() {
                 <Instagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">
+              <Link href="https://www.linkedin.com/in/ashitosh01/" className="text-muted-foreground hover:text-primary">
                 <Linkedin className="h-5 w-5" />
                 <span className="sr-only">LinkedIn</span>
               </Link>
@@ -46,9 +46,6 @@ export default function Footer() {
               <Link href="/#shop" className="text-sm text-muted-foreground hover:text-primary">
                 Shop
               </Link>
-              <Link href="/#future-plans" className="text-sm text-muted-foreground hover:text-primary">
-                Future Plans
-              </Link>
               <Link href="/#contact" className="text-sm text-muted-foreground hover:text-primary">
                 Contact
               </Link>
@@ -67,9 +64,6 @@ export default function Footer() {
               <Link href="#" className="text-sm text-muted-foreground hover:text-primary">
                 Cookie Policy
               </Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-primary">
-                GDPR
-              </Link>
             </nav>
           </div>
 
@@ -78,15 +72,15 @@ export default function Footer() {
             <div className="space-y-2">
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4" />
-                <span>info@wearview.com</span>
+                <span>wearview@gmail.com</span>
               </div>
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 999-999-9999</span>
               </div>
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4" />
-                <span>123 Fashion Street, New York, NY 10001</span>
+                <span>DES Pune University</span>
               </div>
             </div>
           </div>
