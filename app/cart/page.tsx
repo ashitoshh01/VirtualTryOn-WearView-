@@ -8,20 +8,13 @@ import { Input } from "@/components/ui/input"
 import { useCart } from "@/context/cart-context"
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from "lucide-react"
 
-// Convert USD to INR (approximate conversion rate)
-const convertToINR = (usdPrice: number) => {
-  const conversionRate = 75
-  return Math.round(usdPrice * conversionRate)
-}
-
 export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, totalPrice } = useCart()
   const [promoCode, setPromoCode] = useState("")
 
-  // Convert prices to INR
-  const totalPriceINR = convertToINR(totalPrice)
-  const taxINR = convertToINR(totalPrice * 0.1)
-  const totalWithTaxINR = totalPriceINR + taxINR
+  // Calculate tax and total
+  const tax = Math.round(totalPrice * 0.1)
+  const totalWithTax = totalPrice + tax
 
   if (cart.length === 0) {
     return (
@@ -84,8 +77,7 @@ export default function CartPage() {
                     </div>
 
                     <div className="col-span-2 text-center">
-                      <div className="md:hidden text-sm text-muted-foreground mb-1">Price:</div>₹
-                      {convertToINR(item.price)}
+                      <div className="md:hidden text-sm text-muted-foreground mb-1">Price:</div>₹{item.price}
                     </div>
 
                     <div className="col-span-2 flex items-center justify-center">
@@ -116,7 +108,7 @@ export default function CartPage() {
                     <div className="col-span-2 text-right flex items-center justify-between md:justify-end">
                       <div className="md:hidden text-sm text-muted-foreground">Total:</div>
                       <div className="flex items-center gap-3">
-                        <span>₹{convertToINR(item.price * item.quantity)}</span>
+                        <span>₹{item.price * item.quantity}</span>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -142,7 +134,7 @@ export default function CartPage() {
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>₹{totalPriceINR}</span>
+                <span>₹{totalPrice}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
@@ -150,11 +142,11 @@ export default function CartPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tax</span>
-                <span>₹{taxINR}</span>
+                <span>₹{tax}</span>
               </div>
               <div className="pt-3 border-t border-border flex justify-between font-medium">
                 <span>Total</span>
-                <span>₹{totalWithTaxINR}</span>
+                <span>₹{totalWithTax}</span>
               </div>
             </div>
 

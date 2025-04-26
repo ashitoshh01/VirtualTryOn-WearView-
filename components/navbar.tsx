@@ -43,7 +43,7 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          <div className="relative h-12 w-44">
+          <div className="relative h-16 w-56">
             <Image src="/images/wearview-logo.png" alt="WearView Logo" fill className="object-contain" priority />
           </div>
         </Link>

@@ -22,19 +22,7 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
   const [isLoading, setIsLoading] = useState(false)
   const [cameraActive, setCameraActive] = useState(false)
 
-  // Start camera when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      startCamera()
-    } else {
-      stopCamera()
-    }
-
-    return () => {
-      stopCamera()
-    }
-  }, [isOpen])
-
+  // Function to start the camera
   const startCamera = async () => {
     setIsLoading(true)
     setPermissionError(false)
@@ -42,48 +30,53 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
     setCameraActive(false)
 
     try {
-      // Check if navigator.mediaDevices is supported
+      // First check if mediaDevices is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("Camera API is not supported in this browser")
+        throw new Error("Your browser doesn't support camera access")
       }
 
-      // Request camera access with lower constraints first
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: "user",
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
-        audio: false,
-      })
+      // Try with basic constraints first
+      let mediaStream: MediaStream
 
-      // Set the stream to the video element
+      try {
+        // Try with ideal constraints first
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: "user",
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: false,
+        })
+      } catch (err) {
+        // If that fails, try with minimal constraints
+        console.log("Failed with ideal constraints, trying minimal constraints")
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        })
+      }
+
+      // If we got here, we have a media stream
       if (videoRef.current) {
+        // Set srcObject directly
         videoRef.current.srcObject = mediaStream
         setStream(mediaStream)
 
-        // Handle successful video loading
-        videoRef.current.onloadedmetadata = () => {
-          if (videoRef.current) {
-            videoRef.current
-              .play()
-              .then(() => {
-                setCameraActive(true)
-                setIsLoading(false)
-              })
-              .catch((error) => {
-                console.error("Error playing video:", error)
-                setErrorMessage("Could not play the video stream. Please try again.")
-                setIsLoading(false)
-                setPermissionError(true)
-              })
-          }
+        // Play the video
+        try {
+          await videoRef.current.play()
+          setCameraActive(true)
+          setIsLoading(false)
+        } catch (playError) {
+          console.error("Error playing video:", playError)
+          throw new Error("Could not play the video stream")
         }
       } else {
         throw new Error("Video element not found")
       }
     } catch (error: any) {
-      console.error("Error accessing camera:", error)
+      console.error("Camera access error:", error)
 
       // Handle different error types
       let message = "Unable to access your camera. Please check your browser permissions."
@@ -96,7 +89,7 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
         message = "Your camera is already in use by another application."
       } else if (error.name === "OverconstrainedError") {
         message = "No camera matching the requested constraints was found."
-      } else if (error.name === "TypeError" || error.message === "Camera API is not supported in this browser") {
+      } else if (error.name === "TypeError" || error.message === "Your browser doesn't support camera access") {
         message = "Your browser doesn't support camera access."
       }
 
@@ -112,6 +105,26 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
     }
   }
 
+  // Start camera when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      // Small delay to ensure DOM is ready
+      const timer = setTimeout(() => {
+        startCamera()
+      }, 300)
+
+      return () => clearTimeout(timer)
+    } else {
+      stopCamera()
+    }
+
+    // Cleanup function
+    return () => {
+      stopCamera()
+    }
+  }, [isOpen])
+
+  // Stop the camera stream
   const stopCamera = () => {
     if (stream) {
       stream.getTracks().forEach((track) => {
@@ -121,7 +134,7 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
     }
 
     // Clear video source
-    if (videoRef.current && videoRef.current.srcObject) {
+    if (videoRef.current) {
       videoRef.current.srcObject = null
     }
 
@@ -138,6 +151,7 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
     onClose()
   }
 
+  // If modal is not open, don't render anything
   if (!isOpen) return null
 
   return (

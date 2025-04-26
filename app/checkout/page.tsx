@@ -12,21 +12,14 @@ import { useCart } from "@/context/cart-context"
 import { ArrowLeft, CreditCard, Truck, Check } from "lucide-react"
 import { useState } from "react"
 
-// Convert USD to INR (approximate conversion rate)
-const convertToINR = (usdPrice: number) => {
-  const conversionRate = 75
-  return Math.round(usdPrice * conversionRate)
-}
-
 export default function CheckoutPage() {
   const { cart, totalPrice, clearCart } = useCart()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
 
-  // Convert prices to INR
-  const totalPriceINR = convertToINR(totalPrice)
-  const taxINR = convertToINR(totalPrice * 0.1)
-  const totalWithTaxINR = totalPriceINR + taxINR
+  // Calculate tax and total
+  const tax = Math.round(totalPrice * 0.1)
+  const totalWithTax = totalPrice + tax
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -188,7 +181,7 @@ export default function CheckoutPage() {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="express" id="express" />
                   <Label htmlFor="express" className="flex items-center gap-2">
-                    <Truck className="h-4 w-4" /> Express Shipping (1-2 business days) - ₹749
+                    <Truck className="h-4 w-4" /> Express Shipping (1-2 business days) - ₹249
                   </Label>
                 </div>
               </RadioGroup>
@@ -217,10 +210,10 @@ export default function CheckoutPage() {
                   <div className="flex-1">
                     <div className="flex justify-between">
                       <h4 className="font-medium">{item.name}</h4>
-                      <span>₹{convertToINR(item.price * item.quantity)}</span>
+                      <span>₹{item.price * item.quantity}</span>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Qty: {item.quantity} × ₹{convertToINR(item.price)}
+                      Qty: {item.quantity} × ₹{item.price}
                     </div>
                   </div>
                 </div>
@@ -230,7 +223,7 @@ export default function CheckoutPage() {
             <div className="space-y-3 pt-6 border-t border-border">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>₹{totalPriceINR}</span>
+                <span>₹{totalPrice}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
@@ -238,11 +231,11 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tax</span>
-                <span>₹{taxINR}</span>
+                <span>₹{tax}</span>
               </div>
               <div className="pt-3 border-t border-border flex justify-between font-medium">
                 <span>Total</span>
-                <span>₹{totalWithTaxINR}</span>
+                <span>₹{totalWithTax}</span>
               </div>
             </div>
           </div>

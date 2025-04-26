@@ -11,12 +11,6 @@ import { ShoppingCart, Eye } from "lucide-react"
 import { useCart } from "@/context/cart-context"
 import { toast } from "@/components/ui/use-toast"
 
-// Convert USD to INR (approximate conversion rate)
-const convertToINR = (usdPrice: number) => {
-  const conversionRate = 75
-  return Math.round(usdPrice * conversionRate)
-}
-
 // Product type definition
 type Product = {
   id: string
@@ -28,13 +22,13 @@ type Product = {
 }
 
 export default function ShopSection() {
-  // Sample product data
+  // Sample product data with prices directly in INR
   const products: Product[] = [
     {
       id: "1",
       name: "Classic White T-Shirt",
       category: "Shirts",
-      price: 29.99,
+      price: 1299,
       image: "/images/tshirt.jpeg",
       tags: ["New", "Popular"],
     },
@@ -42,7 +36,7 @@ export default function ShopSection() {
       id: "2",
       name: "Slim Fit Jeans",
       category: "Pants",
-      price: 59.99,
+      price: 2499,
       image: "/images/jeans.jpeg",
       tags: ["Bestseller"],
     },
@@ -50,14 +44,14 @@ export default function ShopSection() {
       id: "3",
       name: "Blessed Hoodie",
       category: "Hoodies",
-      price: 49.99,
+      price: 1999,
       image: "/images/hoodie.webp",
     },
     {
       id: "4",
       name: "Running Shoes",
       category: "Shoes",
-      price: 89.99,
+      price: 3499,
       image: "/placeholder.svg?height=400&width=300",
       tags: ["New"],
     },
@@ -65,7 +59,7 @@ export default function ShopSection() {
       id: "5",
       name: "Leather Jacket",
       category: "Jackets",
-      price: 199.99,
+      price: 4999,
       image: "/images/leather-jacket.webp",
       tags: ["Premium"],
     },
@@ -73,7 +67,7 @@ export default function ShopSection() {
       id: "6",
       name: "Summer Beach Set",
       category: "Sets",
-      price: 79.99,
+      price: 2999,
       image: "/images/summer-set.webp",
     },
   ]
@@ -158,7 +152,7 @@ export default function ShopSection() {
                 <CardContent className="p-4">
                   <div className="text-sm text-muted-foreground mb-1">{product.category}</div>
                   <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
-                  <div className="font-medium">₹{convertToINR(product.price)}</div>
+                  <div className="font-medium">₹{product.price}</div>
                 </CardContent>
                 <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-2">
                   <Button asChild variant="outline" className="w-full">

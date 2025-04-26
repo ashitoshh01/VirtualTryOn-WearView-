@@ -14,19 +14,13 @@ import { useCart } from "@/context/cart-context"
 import { toast } from "@/components/ui/use-toast"
 import CameraModal from "@/components/camera-modal"
 
-// Convert USD to INR (approximate conversion rate)
-const convertToINR = (usdPrice: number) => {
-  const conversionRate = 75
-  return Math.round(usdPrice * conversionRate)
-}
-
-// Sample product data with prices in USD (will be converted to INR)
+// Sample product data with prices directly in INR
 const products = [
   {
     id: "1",
     name: "Classic White T-Shirt",
     category: "Shirts",
-    price: 29.99,
+    price: 1299,
     image: "/images/tshirt.jpeg",
     description: "A comfortable, classic fit t-shirt made from 100% cotton.",
   },
@@ -34,7 +28,7 @@ const products = [
     id: "2",
     name: "Slim Fit Jeans",
     category: "Pants",
-    price: 59.99,
+    price: 2499,
     image: "/images/jeans.jpeg",
     description: "Modern slim fit jeans with a comfortable stretch fabric.",
   },
@@ -42,7 +36,7 @@ const products = [
     id: "3",
     name: "Blessed Hoodie",
     category: "Hoodies",
-    price: 49.99,
+    price: 1999,
     image: "/images/hoodie.webp",
     description: "A warm and comfortable hoodie perfect for casual wear.",
   },
@@ -50,7 +44,7 @@ const products = [
     id: "4",
     name: "Running Shoes",
     category: "Shoes",
-    price: 89.99,
+    price: 3499,
     image: "/placeholder.svg?height=400&width=300",
     description: "Lightweight running shoes with responsive cushioning.",
   },
@@ -58,7 +52,7 @@ const products = [
     id: "5",
     name: "Leather Jacket",
     category: "Jackets",
-    price: 199.99,
+    price: 4999,
     image: "/images/leather-jacket.webp",
     description: "Premium leather jacket with a classic design.",
   },
@@ -66,7 +60,7 @@ const products = [
     id: "6",
     name: "Summer Beach Set",
     category: "Sets",
-    price: 79.99,
+    price: 2999,
     image: "/images/summer-set.webp",
     description: "Light and stylish summer beach set with tropical print.",
   },
@@ -128,9 +122,6 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
     })
   }
 
-  // Convert product price to INR
-  const priceInINR = convertToINR(product.price)
-
   return (
     <div className="container mx-auto px-4 py-24">
       <div className="mb-8">
@@ -149,7 +140,7 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
               </div>
 
               <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
-              <div className="text-xl font-medium mb-4">₹{priceInINR}</div>
+              <div className="text-xl font-medium mb-4">₹{product.price}</div>
               <p className="text-muted-foreground mb-6">{product.description}</p>
 
               <Button
@@ -415,7 +406,7 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
                             />
                           </div>
                           <div className="text-sm font-medium truncate">{p.name}</div>
-                          <div className="text-sm text-muted-foreground">₹{convertToINR(p.price)}</div>
+                          <div className="text-sm text-muted-foreground">₹{p.price}</div>
                         </Link>
                       ))}
                   </div>
