@@ -7,6 +7,34 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import * as THREE from "three"
 
+// Shooting star component
+const ShootingStar = ({ delay = 0 }) => {
+  return (
+    <motion.div
+      className="absolute h-px bg-white"
+      style={{
+        width: Math.random() * 150 + 50,
+        rotate: Math.random() * 360,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        opacity: 0,
+      }}
+      animate={{
+        opacity: [0, 1, 0],
+        scale: [0, 1, 0],
+        x: [0, Math.random() * 200 - 100],
+        y: [0, Math.random() * 200 - 100],
+      }}
+      transition={{
+        duration: Math.random() * 2 + 1,
+        delay: delay,
+        repeat: Number.POSITIVE_INFINITY,
+        repeatDelay: Math.random() * 10 + 5,
+      }}
+    />
+  )
+}
+
 export default function HeroSection() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -163,6 +191,9 @@ export default function HeroSection() {
     }
   }, [isDarkMode])
 
+  // Generate shooting stars
+  const shootingStars = Array.from({ length: 20 }).map((_, i) => <ShootingStar key={i} delay={i * 0.5} />)
+
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-16 w-full overflow-hidden">
       {/* 3D Background */}
@@ -171,6 +202,9 @@ export default function HeroSection() {
         <div
           className={`absolute inset-0 ${isDarkMode ? "bg-gradient-to-b from-purple-900/30 to-black/80" : "bg-gradient-to-b from-purple-100/50 to-white/80"}`}
         ></div>
+
+        {/* Shooting stars layer */}
+        <div className="absolute inset-0 overflow-hidden">{isDarkMode && shootingStars}</div>
       </div>
 
       {/* Content */}

@@ -42,8 +42,9 @@ export default function Navbar() {
       )}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="relative h-16 w-56">
+        <Link href="/" className="flex items-center">
+          {/* Responsive logo size */}
+          <div className="relative h-10 w-36 sm:h-12 sm:w-44 md:h-16 md:w-56">
             <Image src="/images/wearview-logo.png" alt="WearView Logo" fill className="object-contain" priority />
           </div>
         </Link>
@@ -61,10 +62,10 @@ export default function Navbar() {
           </Button>
         </nav>
 
-        {/* Mobile Menu Button */}
-        <div className="flex items-center md:hidden space-x-2">
+        {/* Mobile Menu Button - Fixed spacing */}
+        <div className="flex items-center md:hidden">
           <CartDropdown />
-          <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
+          <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme" className="ml-1">
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5 text-foreground" />}
           </Button>
           <Button
@@ -72,6 +73,7 @@ export default function Navbar() {
             size="icon"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
+            className="ml-1"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
