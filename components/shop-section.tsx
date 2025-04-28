@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -87,6 +86,14 @@ export default function ShopSection() {
     })
   }
 
+  const handleTryOn = () => {
+    toast({
+      title: "Coming Soon",
+      description: "Virtual try-on feature will be available soon!",
+      duration: 3000,
+    })
+  }
+
   return (
     <section id="shop" className="py-20 bg-muted">
       <div className="container mx-auto px-4">
@@ -155,10 +162,8 @@ export default function ShopSection() {
                   <div className="font-medium">₹{product.price}</div>
                 </CardContent>
                 <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-2">
-                  <Button asChild variant="outline" className="w-full">
-                    <Link href={`/try-on/${product.id}`}>
-                      <Eye className="mr-2 h-4 w-4" /> Try-On
-                    </Link>
+                  <Button variant="outline" className="w-full" onClick={handleTryOn}>
+                    <Eye className="mr-2 h-4 w-4" /> Try-On
                   </Button>
                   <Button className="w-full" onClick={() => handleAddToCart(product)}>
                     <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
