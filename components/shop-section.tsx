@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
+import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -69,10 +70,34 @@ export default function ShopSection() {
       price: 2999,
       image: "/images/summer-set.webp",
     },
+    // New accessories products
+    {
+      id: "7",
+      name: "Classic Aviator Sunglasses",
+      category: "Accessories",
+      price: 1499,
+      image: "/placeholder.svg?height=400&width=300&text=Sunglasses",
+      tags: ["Trending"],
+    },
+    {
+      id: "8",
+      name: "Leather Watch",
+      category: "Accessories",
+      price: 2999,
+      image: "/placeholder.svg?height=400&width=300&text=Watch",
+      tags: ["Premium"],
+    },
+    {
+      id: "9",
+      name: "Silver Necklace",
+      category: "Accessories",
+      price: 1799,
+      image: "/placeholder.svg?height=400&width=300&text=Necklace",
+    },
   ]
 
   const [filter, setFilter] = useState<string>("All")
-  const categories = ["All", "Shirts", "Pants", "Hoodies", "Shoes", "Jackets", "Sets"]
+  const categories = ["All", "Shirts", "Pants", "Hoodies", "Shoes", "Jackets", "Sets", "Accessories"]
   const { addToCart } = useCart()
 
   const filteredProducts = filter === "All" ? products : products.filter((product) => product.category === filter)
@@ -82,14 +107,6 @@ export default function ShopSection() {
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart.`,
-      duration: 3000,
-    })
-  }
-
-  const handleTryOn = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Virtual try-on feature will be available soon!",
       duration: 3000,
     })
   }
@@ -162,8 +179,10 @@ export default function ShopSection() {
                   <div className="font-medium">₹{product.price}</div>
                 </CardContent>
                 <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-2">
-                  <Button variant="outline" className="w-full" onClick={handleTryOn}>
-                    <Eye className="mr-2 h-4 w-4" /> Try-On
+                  <Button asChild variant="outline" className="w-full">
+                    <Link href={`/try-on/${product.id}`}>
+                      <Eye className="mr-2 h-4 w-4" /> Try-On
+                    </Link>
                   </Button>
                   <Button className="w-full" onClick={() => handleAddToCart(product)}>
                     <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
