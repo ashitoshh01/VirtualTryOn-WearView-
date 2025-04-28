@@ -1,65 +1,67 @@
-"use client"
+"use client";
 
-import { useRef, useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { X, Camera, ImageIcon } from "lucide-react"
-import Image from "next/image"
-import { toast } from "@/components/ui/use-toast"
+import { useRef, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { X, Camera, ImageIcon } from "lucide-react";
+import Image from "next/image";
+import { toast } from "@/components/ui/use-toast";
 
 interface CameraModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onCapture: () => void
-  productImage: string
-  productName: string
+  isOpen: boolean;
+  onClose: () => void;
+  onCapture: () => void;
+  productImage: string;
+  productName: string;
 }
 
-export default function CameraModal({ isOpen, onClose, onCapture, productImage, productName }: CameraModalProps) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [stream, setStream] = useState<MediaStream | null>(null)
-  const [permissionError, setPermissionError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [cameraActive, setCameraActive] = useState(false)
-  const [simulationMode, setSimulationMode] = useState(true) // Default to simulation mode
+export default function CameraModal({
+  isOpen,
+  onClose,
+  onCapture,
+  productImage,
+  productName,
+}: CameraModalProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [permissionError, setPermissionError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [simulationMode, setSimulationMode] = useState(true);
 
-  // Function to check if we're in a preview environment
   const isPreviewEnvironment = () => {
-    // Check if we're in a development or preview environment
+    if (typeof window === "undefined") return true;
     return (
       process.env.NODE_ENV === "development" ||
-      window.location.hostname.includes("vercel.app") ||
       window.location.hostname === "localhost"
-    )
-  }
+    );
+  };
 
-  // Function to start the camera
   const startCamera = async () => {
-    // If we're in a preview environment, just use simulation mode
-    if (isPreviewEnvironment()) {
-      console.log("Preview environment detected, using simulation mode")
-      setSimulationMode(true)
-      setIsLoading(false)
-      return
+    if (typeof window === "undefined" || !navigator.mediaDevices) {
+      console.log("Not in a browser environment or mediaDevices not available");
+      setSimulationMode(true);
+      setIsLoading(false);
+      return;
     }
 
-    setIsLoading(true)
-    setPermissionError(false)
-    setErrorMessage("")
-    setCameraActive(false)
-    setSimulationMode(false)
+    if (isPreviewEnvironment()) {
+      console.log("Preview environment detected, using simulation mode");
+      setSimulationMode(true);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setPermissionError(false);
+    setErrorMessage("");
+    setCameraActive(false);
+    setSimulationMode(false);
 
     try {
-      // First check if mediaDevices is supported
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("Your browser doesn't support camera access")
-      }
-
-      // Try with basic constraints first
-      let mediaStream: MediaStream
+      let mediaStream: MediaStream;
 
       try {
-        // Try with ideal constraints first
         mediaStream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: "user",
@@ -67,113 +69,91 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
             height: { ideal: 720 },
           },
           audio: false,
-        })
-      } catch (err) {
-        // If that fails, try with minimal constraints
-        console.log("Failed with ideal constraints, trying minimal constraints")
+        });
+      } catch {
+        console.log("Failed with ideal constraints, trying minimal constraints");
         mediaStream = await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: false,
-        })
+        });
       }
 
-      // If we got here, we have a media stream
       if (videoRef.current) {
-        // Set srcObject directly
-        videoRef.current.srcObject = mediaStream
-        setStream(mediaStream)
-
-        // Play the video
-        try {
-          await videoRef.current.play()
-          setCameraActive(true)
-          setIsLoading(false)
-        } catch (playError) {
-          console.error("Error playing video:", playError)
-          throw new Error("Could not play the video stream")
-        }
-      } else {
-        throw new Error("Video element not found")
+        videoRef.current.srcObject = mediaStream;
+        await videoRef.current.play();
+        setStream(mediaStream);
+        setCameraActive(true);
+        setIsLoading(false);
       }
     } catch (error: any) {
-      console.error("Camera access error:", error)
+      console.error("Camera access error:", error);
 
-      // Handle different error types
-      let message = "Unable to access your camera. Please check your browser permissions."
+      let message = "Unable to access your camera. Please check your browser permissions.";
 
       if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
-        message = "Camera access was denied. Please allow camera access in your browser settings."
+        message = "Camera access was denied. Please allow camera access in your browser settings.";
       } else if (error.name === "NotFoundError") {
-        message = "No camera was found on your device."
+        message = "No camera was found on your device.";
       } else if (error.name === "NotReadableError" || error.name === "TrackStartError") {
-        message = "Your camera is already in use by another application."
+        message = "Your camera is already in use by another application.";
       } else if (error.name === "OverconstrainedError") {
-        message = "No camera matching the requested constraints was found."
+        message = "No camera matching the requested constraints was found.";
       } else if (error.name === "TypeError" || error.message === "Your browser doesn't support camera access") {
-        message = "Your browser doesn't support camera access."
+        message = "Your browser doesn't support camera access.";
       }
 
-      setErrorMessage(message)
-      setPermissionError(true)
-      setIsLoading(false)
-      setSimulationMode(true) // Fall back to simulation mode on error
+      setErrorMessage(message);
+      setPermissionError(true);
+      setIsLoading(false);
+      setSimulationMode(true);
 
       toast({
         title: "Using Simulation Mode",
         description: "Camera access is not available. Using simulation mode instead.",
         duration: 3000,
-      })
+      });
     }
-  }
+  };
 
-  // Start camera when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      // Small delay to ensure DOM is ready
-      const timer = setTimeout(() => {
-        startCamera()
-      }, 300)
-
-      return () => clearTimeout(timer)
-    } else {
-      stopCamera()
-    }
-
-    // Cleanup function
-    return () => {
-      stopCamera()
-    }
-  }, [isOpen])
-
-  // Stop the camera stream
   const stopCamera = () => {
     if (stream) {
-      stream.getTracks().forEach((track) => {
-        track.stop()
-      })
-      setStream(null)
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
     }
-
-    // Clear video source
     if (videoRef.current) {
-      videoRef.current.srcObject = null
+      videoRef.current.srcObject = null;
+    }
+    setCameraActive(false);
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (isOpen) {
+      timer = setTimeout(() => {
+        startCamera();
+      }, 300);
+    } else {
+      stopCamera();
     }
 
-    setCameraActive(false)
-  }
+    return () => {
+      clearTimeout(timer);
+      stopCamera();
+    };
+  }, [isOpen]);
 
   const handleCapture = () => {
-    onCapture()
-    stopCamera()
-  }
+    onCapture();
+    stopCamera();
+  };
 
   const handleClose = () => {
-    stopCamera()
-    onClose()
-  }
+    stopCamera();
+    onClose();
+  };
 
-  // If modal is not open, don't render anything
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
@@ -196,8 +176,7 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
               </div>
               <h3 className="text-lg font-medium">Camera Access Error</h3>
               <p className="text-muted-foreground max-w-md mx-auto mb-4">
-                {errorMessage ||
-                  "We couldn't access your camera. This could be due to browser permissions or your device settings."}
+                {errorMessage || "We couldn't access your camera. This could be due to browser permissions or your device settings."}
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-2">
                 <Button variant="outline" onClick={handleClose}>
@@ -225,13 +204,9 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
                       fill
                       className="object-cover"
                     />
-
-                    {/* Overlay a silhouette */}
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-48 h-72 bg-gray-800/50 rounded-full"></div>
                     </div>
-
-                    {/* Product overlay */}
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                       <div className="relative w-40 h-60">
                         <Image
@@ -250,8 +225,7 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
                 <p className="flex items-center">
                   <ImageIcon className="h-4 w-4 mr-2" />
                   <span>
-                    <strong>Simulation Mode:</strong> Camera access is not available in this environment. This is a
-                    simulated preview.
+                    <strong>Simulation Mode:</strong> Camera access is not available. This is a simulated preview.
                   </span>
                 </p>
               </div>
@@ -262,7 +236,9 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
                 <Button variant="outline" onClick={handleClose}>
                   Cancel
                 </Button>
-                <Button onClick={handleCapture}>Capture</Button>
+                <Button onClick={handleCapture}>
+                  Capture
+                </Button>
               </div>
             </>
           ) : (
@@ -303,5 +279,5 @@ export default function CameraModal({ isOpen, onClose, onCapture, productImage, 
         </div>
       </div>
     </div>
-  )
+  );
 }

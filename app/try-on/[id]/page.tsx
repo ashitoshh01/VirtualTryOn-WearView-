@@ -99,9 +99,10 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
   // Check if we're in a preview environment
   const isPreviewEnvironment = () => {
     return (
-      process.env.NODE_ENV === "development" ||
-      (typeof window !== "undefined" &&
-        (window.location.hostname.includes("vercel.app") || window.location.hostname === "localhost"))
+      typeof window !== "undefined" &&
+      (window.location.hostname.includes("vercel.app") ||
+        window.location.hostname.includes("v0.dev") ||
+        window.location.hostname === "localhost")
     )
   }
 
@@ -119,8 +120,7 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
           <Info className="h-4 w-4" />
           <AlertTitle>Preview Mode</AlertTitle>
           <AlertDescription>
-            You're viewing this in a preview environment. The virtual try-on feature will use simulation mode instead of
-            accessing your camera.
+            You're viewing this in a preview environment. The virtual try-on feature will use simulation mode.
           </AlertDescription>
         </Alert>
       )}
@@ -172,7 +172,8 @@ export default function TryOnPage({ params }: { params: { id: string } }) {
                   <Image src={product.image || "/placeholder.svg"} alt={product.name} fill className="object-cover" />
                 </div>
                 <Button onClick={() => setIsCameraModalOpen(true)} className="w-full">
-                  <Camera className="mr-2 h-4 w-4" /> {isPreviewEnvironment() ? "View in Simulation" : "View in Camera"}
+                  <Camera className="mr-2 h-4 w-4" />
+                  {isPreviewEnvironment() ? "View in Simulation" : "View in Camera"}
                 </Button>
               </div>
             )}
